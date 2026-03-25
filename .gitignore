@@ -1,0 +1,83 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+activate.sh
+# logger
+logs/debug.log
+logs/error.log
+
+
+
+# Django stuff:
+
+credentials
+
+*.log
+*.pot
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+*.sqlite3-journal
+*.coverage
+*.env
+*.env.*
+.envrc
+db.sqlite3
+media/
+staticfiles/
+
+# Environment variables / secrets
+.env
+.env.local
+.env.production
+.env.dev
+.env.*
+
+# Django migrations (optional – if you don’t want to track them)
+# ** Uncomment the next line if you want to ignore migrations
+# */migrations/
+
+# VSCode
+.vscode/
+
+# macOS
+.DS_Store
+
+# PyCharm
+.idea/
+
+# pipenv, poetry, etc.
+Pipfile.lock
+poetry.lock
+
+# Virtualenv
+venv/
+ENV/
+env/
+.venv/
+
+# Docker
+*.pid
+*.seed
+*.bak
+*.swp
+docker-compose.override.yml
+
+# Node stuff (if using Tailwind, React, etc.)
+node_modules/
+build/
+dist/
+
+# Static Files
+static_files/
+media_files/
+
+
+# env production
+.env.productionstatic/
+build/
+static/
+build/
