@@ -7,9 +7,9 @@ activate.sh
 # logger
 logs/debug.log
 logs/error.log
+activate.bat
 
-
-
+.env
 # Django stuff:
 
 credentials
