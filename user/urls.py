@@ -1,6 +1,6 @@
 from django.urls import include, path, re_path
 
-from .api import (
+from user.api import (
     TokenRefreshView,
     UserLoginAPI,
     LogoutAPIView,
@@ -25,11 +25,6 @@ urlpatterns = [
                     name="password-change-api",
                 ),
                 path("reset/", PasswordResetAPI.as_view(), name="password_reset_api"),
-                path(
-                    "password/reset-confirm/",
-                    PasswordResetConfirmTemplateView.as_view(),
-                    name="password_reset_confirm",
-                ),
             ]
         ),
     ),

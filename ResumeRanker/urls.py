@@ -5,9 +5,15 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from user.views import PasswordResetConfirmTemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'api/(?P<version>v1)/', include('user.urls')),
+    path(
+        "password/reset-confirm/",
+        PasswordResetConfirmTemplateView.as_view(),
+        name="password_reset_confirm_web",
+    ),
     path(
         "api/",
         include([

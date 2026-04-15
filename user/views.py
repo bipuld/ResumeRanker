@@ -9,7 +9,7 @@ from user.serializers import PasswordResetConfirmSerializer
 
 
 class PasswordResetConfirmTemplateView(View):
-    template_name = "user/user_reset_email.html"
+    template_name = "user/password_reset_confirm.html"
 
     def get(self, request, *args, **kwargs):
         print(request.GET)
