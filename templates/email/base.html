@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>ResumeRanker - Password Reset</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				background: #eef3f8;
+				font-family: Arial, Helvetica, sans-serif;
+				color: #1f2937;
+			}
+
+			table {
+				border-collapse: collapse;
+			}
+
+			img {
+				border: 0;
+				display: block;
+				max-width: 100%;
+			}
+
+			a {
+				color: inherit;
+			}
+
+			.page-shell {
+				width: 100%;
+				background:
+					radial-gradient(circle at top, rgba(2, 132, 199, 0.12), transparent 35%),
+					linear-gradient(180deg, #eef3f8 0%, #e7eef6 100%);
+				padding: 32px 16px;
+			}
+
+			.email-card {
+				width: 100%;
+				max-width: 680px;
+				margin: 0 auto;
+				background: #ffffff;
+				border-radius: 28px;
+				overflow: hidden;
+				box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+				border: 1px solid rgba(148, 163, 184, 0.18);
+			}
+
+			.content-wrap {
+				padding: 0 24px 24px;
+			}
+
+			.content-panel {
+				background: #ffffff;
+				border-radius: 22px;
+				border: 1px solid #dbe5ef;
+				padding: 28px;
+			}
+
+			.muted {
+				color: #64748b;
+			}
+
+			.btn {
+				display: inline-block;
+				background: linear-gradient(135deg, #0f766e 0%, #1d4ed8 100%);
+				color: #ffffff !important;
+				text-decoration: none;
+				font-weight: 700;
+				letter-spacing: 0.2px;
+				padding: 15px 28px;
+				border-radius: 14px;
+				box-shadow: 0 12px 24px rgba(29, 78, 216, 0.22);
+			}
+
+			.note-box {
+				background: #f8fbff;
+				border: 1px solid #d8e3f0;
+				border-left: 4px solid #0ea5e9;
+				border-radius: 16px;
+				padding: 16px 18px;
+			}
+
+			.footer-rule {
+				border-top: 1px solid #e2e8f0;
+				margin: 24px 0 0;
+				padding-top: 22px;
+			}
+
+			@media only screen and (max-width: 640px) {
+				.page-shell {
+					padding: 18px 10px;
+				}
+
+				.content-wrap {
+					padding: 0 14px 14px;
+				}
+
+				.content-panel {
+					padding: 22px 18px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="page-shell">
+			<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td align="center">
+						<table role="presentation" class="email-card" width="100%" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									{% include "email/includes/header.html" %}
+								</td>
+							</tr>
+							<tr>
+								<td class="content-wrap">
+									<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+										<tr>
+											<td class="content-panel">
+												{% block content %}{% endblock content %}
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									{% include "email/includes/footer.html" %}
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

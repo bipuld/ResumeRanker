@@ -152,7 +152,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             print(f"Deactivated session {session.session_key} for user {self.username}")
 
 
-
 # class UserProfile(CommonModel):
 #     user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
 #     bio = CKEditor5Field("Bio", config_name="extends", blank=True)

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ResumeRanker - Password Reset Email Preview</title>
+        <style>
+          * {
+            box-sizing: border-box;
+          }
+
+          body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0f172a;
+            background:
+              radial-gradient(circle at top left, rgba(14, 165, 233, 0.18), transparent 28%),
+              radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.16), transparent 26%),
+              linear-gradient(180deg, #eaf1f8 0%, #dfe9f3 100%);
+            padding: 32px 16px;
+          }
+
+          .page {
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto;
+          }
+
+          .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+          }
+
+          .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+          }
+
+          .brand-mark {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #0f766e 0%, #1d4ed8 100%);
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 800;
+            box-shadow: 0 14px 28px rgba(29, 78, 216, 0.24);
+          }
+
+          .brand-copy h1 {
+            margin: 0;
+            font-size: 30px;
+            line-height: 1.1;
+          }
+
+          .brand-copy p {
+            margin: 6px 0 0;
+            color: #475569;
+          }
+
+          .pill {
+            display: inline-block;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(15, 118, 110, 0.1);
+            color: #0f766e;
+            border: 1px solid rgba(15, 118, 110, 0.18);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+          }
+
+          .preview-frame {
+            background: #ffffff;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 28px 64px rgba(15, 23, 42, 0.16);
+            border: 1px solid rgba(148, 163, 184, 0.24);
+          }
+
+          .preview-meta {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin: 16px 0 24px;
+          }
+
+          .meta-card {
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 18px;
+            padding: 16px;
+          }
+
+          .meta-card strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: #0f766e;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+          }
+
+          .meta-card span {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.5;
+          }
+
+          .preview-footer {
+            margin-top: 18px;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.7;
+          }
+
+          @media (max-width: 720px) {
+            .hero {
+              flex-direction: column;
+              align-items: flex-start;
+            }
+
+            .preview-meta {
+              grid-template-columns: 1fr;
+            }
+          }
+        border: 3px solid #e2e8f0;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        <div class="page">
+          <div class="hero">
+            <div class="brand">
+              <div class="brand-mark">RR</div>
+              <div class="brand-copy">
+                <h1>ResumeRanker</h1>
+                <p>Password reset email preview</p>
+              </div>
+            </div>
+            <div class="pill">Transactional email</div>
+          </div>
+
+          <div class="preview-meta">
+            <div class="meta-card">
+              <strong>Purpose</strong>
+              <span>Reset password email for the ResumeRanker platform.</span>
+            </div>
+            <div class="meta-card">
+              <strong>Tone</strong>
+              <span>Secure, professional, and product-focused.</span>
+            </div>
+            <div class="meta-card">
+              <strong>Palette</strong>
+              <span>Navy, teal, and blue with a clean white content card.</span>
+            </div>
+            <div class="meta-card">
+              <strong>Layout</strong>
+              <span>Centered transactional card with button, fallback link, and security note.</span>
+            </div>
+          </div>
+
+          <div class="preview-frame">
+            {% include "email/includes/header.html" %}
+            <div style="padding: 0 24px 24px; background: #ffffff;">
+              <div style="background: #ffffff; border-radius: 22px; border: 1px solid #dbe5ef; padding: 28px;">
+                <div style="text-align: center; padding-bottom: 22px;">
+                  <div style="display: inline-block; width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(135deg, #0f766e 0%, #1d4ed8 100%); line-height: 64px; text-align: center; font-size: 24px; color: #ffffff; font-weight: 800; box-shadow: 0 14px 30px rgba(29, 78, 216, 0.24);">RR</div>
+                </div>
+
+                <div style="text-align: center; padding-bottom: 16px; font-size: 30px; line-height: 1.25; font-weight: 800; color: #0f172a; letter-spacing: -0.4px;">
+                  Reset your ResumeRanker password
+                </div>
+
+                <div style="text-align: center; padding-bottom: 24px; font-size: 15px; line-height: 1.8; color: #475569;">
+                  Hi Jordan, we received a request to reset your account password. Use the button below to create a new password and get back to reviewing resumes, candidates, and matches.
+                </div>
+
+                <div style="text-align: center; padding-bottom: 24px;">
+                  <a href="#" style="display: inline-block; background: linear-gradient(135deg, #0f766e 0%, #1d4ed8 100%); color: #ffffff; text-decoration: none; font-weight: 700; letter-spacing: 0.2px; padding: 15px 28px; border-radius: 14px; box-shadow: 0 12px 24px rgba(29, 78, 216, 0.22);">Reset password</a>
+                </div>
+
+                <div style="background: #f8fbff; border: 1px solid #d8e3f0; border-left: 4px solid #0ea5e9; border-radius: 16px; padding: 16px 18px; margin-bottom: 22px;">
+                  <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: #0f766e; margin-bottom: 6px;">If the button does not open</div>
+                  <div style="font-size: 14px; line-height: 1.7; color: #475569; margin-bottom: 8px;">Copy and paste this link into your browser:</div>
+                  <div style="font-size: 13px; line-height: 1.6; word-break: break-all; color: #1d4ed8; font-weight: 700;">https://resumeranker.example.com/password/reset-confirm/?u=demo&amp;t=demo-token</div>
+                </div>
+
+                <div style="display: inline-block; background: #ecfeff; color: #0f766e; border: 1px solid #a5f3fc; border-radius: 999px; padding: 8px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.4px;">
+                  Transactional security email
+                </div>
+
+                <div style="font-size: 14px; line-height: 1.8; color: #475569; margin-top: 16px;">
+                  If you did not request this reset, you can ignore this email. Your password will stay unchanged unless you use the link above.
+                </div>
+              </div>
+            </div>
+            {% include "email/includes/footer.html" %}
+          </div>
+
+          <div class="preview-footer">
+            This page is a visual preview for the email template and uses the same shared header, footer, and content styling.
+          </div>
+        100% { transform: rotate(360deg); }
+        top: 20px;
+        right: 20px;
+        background: #48bb78;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        z-index: 1001;
+      }
+
+      .toast.show {
+        transform: translateX(0);
+      }
+
+      .toast.error {
+        background: #f56565;
+      }
+
+      .user-info {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+        background: rgba(72, 187, 120, 0.1);
+        border-radius: 12px;
+        margin-top: 1rem;
+      }
+
+      .user-info.show {
+        display: block;
+      }
+
+      .sign-out-button {
+        background: #f56565;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .sign-out-button:hover {
+        background: #e53e3e;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          margin: 1rem;
+          padding: 2rem 1.5rem;
+        }
+        
+        .features {
+          grid-template-columns: 1fr;
+          gap: 0.5rem;
+        }
+        
+        .feature {
+          padding: 0.75rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <i class="fas fa-graduation-cap"></i>
+        <h1>TechYatra Labs</h1>
+        <p>Learning Management System</p>
+      </div>
+
+      <div class="welcome">
+        <h2>Welcome Back</h2>
+        <p>Sign in to continue your learning journey</p>
+      </div>
+
+      <div class="login-section" id="loginSection">
+        <div class="clerk-btn-wrapper">
+          <button class="sign-in-button" id="signInBtn">
+            <i class="fas fa-sign-in-alt"></i>
+            Sign In with Clerk
+          </button>
+          
+          <button class="google-oauth-button" id="googleSignInBtn">
+            <i class="fab fa-google"></i>
+            Continue with Google
+          </button>
+        </div>
+
+        <div class="divider">
+          <span>Secure & Fast Authentication</span>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secure Login</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-bolt"></i>
+            <span>Lightning Fast</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-mobile-alt"></i>
+            <span>Mobile Ready</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="user-info" id="userInfo">
+        <h3>Welcome!</h3>
+        <p id="userEmail"></p>
+        <button class="sign-out-button" id="signOutBtn">Sign Out</button>
+      </div>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <p style="color: #4a5568; font-weight: 500;">Signing you in...</p>
+      </div>
+    </div>
+
+    <script>
+        let clerk;
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${isError ? 'error' : ''}`;
+            toast.innerHTML = `
+                <i class="fas fa-${isError ? 'exclamation-circle' : 'check-circle'}" style="margin-right: 0.5rem;"></i>
+                ${message}
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        async function sendTokenToBackend(token) {
+            try {
+                const response = await fetch('http://127.0.0.1:8001/register/social/clerk/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        credential: token
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Backend authentication failed');
+                }
+
+                const data = await response.json();
+                console.log('Backend response:', data);
+                
+                showToast('Successfully authenticated with backend!', false);
+                return data;
+            } catch (error) {
+                console.error('Backend error:', error);
+                showToast(`Backend error: ${error.message}`, true);
+                throw error;
+            }
+        }
+
+        async function handleUserSignedIn(user) {
+            try {
+                showLoading();
+                
+                // Get the session token
+                const token = await clerk.session.getToken();
+                console.log('Got Clerk session token');
+
+                // Send token to backend
+                await sendTokenToBackend(token);
+
+                // Update UI
+                document.getElementById('loginSection').style.display = 'none';
+                const userInfo = document.getElementById('userInfo');
+                const userEmail = document.getElementById('userEmail');
+                
+                userEmail.textContent = user.primaryEmailAddress?.emailAddress || 'No email available';
+                userInfo.classList.add('show');
+                
+                showToast('Successfully signed in!', false);
+            } catch (error) {
+                console.error('Error handling signed in user:', error);
+                showToast('Authentication error. Please try again.', true);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function handleUserSignedOut() {
+            document.getElementById('loginSection').style.display = 'block';
+            const userInfo = document.getElementById('userInfo');
+            userInfo.classList.remove('show');
+            showToast('Successfully signed out', false);
+        }
+
+        async function initializeClerk() {
+            try {
+                clerk = window.Clerk;
+                
+                await clerk.load();
+                console.log('Clerk loaded successfully');
+
+                // Check if user is already signed in
+                if (clerk.user) {
+                    await handleUserSignedIn(clerk.user);
+                }
+
+                // Set up event listeners
+                document.getElementById('signInBtn').addEventListener('click', async () => {
+                    try {
+                        showLoading();
+                        await clerk.openSignIn();
+                    } catch (error) {
+                        console.error('Sign in error:', error);
+                        showToast('Sign in failed. Please try again.', true);
+                        hideLoading();
+                    }
+                });
+
+                document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+                    try {
+                        showLoading();
+                        await clerk.authenticateWithRedirect({
+                            strategy: 'oauth_google',
+                            redirectUrl: window.location.href,
+                            redirectUrlComplete: window.location.href
+                        });
+                    } catch (error) {
+                        console.error('Google sign in error:', error);
+                        showToast('Google sign in failed. Please try again.', true);
+                        hideLoading();
+                    }
+                });
+
+                document.getElementById('signOutBtn').addEventListener('click', async () => {
+                    try {
+                        await clerk.signOut();
+                        handleUserSignedOut();
+                    } catch (error) {
+                        console.error('Sign out error:', error);
+                        showToast('Sign out failed. Please try again.', true);
+                    }
+                });
+
+                // Listen for authentication state changes
+                clerk.addListener((state) => {
+                    if (state.user) {
+                        handleUserSignedIn(state.user);
+                    } else {
+                        handleUserSignedOut();
+                    }
+                });
+
+            } catch (error) {
+                console.error('Failed to initialize Clerk:', error);
+                showToast('Failed to initialize authentication. Please refresh the page.', true);
+            }
+        }
+
+        // Initialize when Clerk is ready
+        window.addEventListener('load', () => {
+            if (window.Clerk) {
+                initializeClerk();
+            } else {
+                // Wait for Clerk to load
+                window.addEventListener('clerk:loaded', initializeClerk);
+            }
+        });
+
+        // Add entrance animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const features = document.querySelectorAll('.feature');
+            
+            // Add entrance animation to features
+            features.forEach((feature, index) => {
+                feature.style.opacity = '0';
+                feature.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    feature.style.transition = 'all 0.6s ease';
+                    feature.style.opacity = '1';
+                    feature.style.transform = 'translateY(0)';
+                }, 800 + index * 100);
+            });
+        });
+    </script>
+  </body>
+</html>

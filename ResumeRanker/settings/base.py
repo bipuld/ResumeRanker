@@ -46,6 +46,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -56,7 +57,7 @@ WSGI_APPLICATION = 'ResumeRanker.wsgi.application'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],
+        'DIRS': [os.path.join(BASE_DIR.parent, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,6 +135,8 @@ SIMPLE_JWT = {
 APP_DOMAIN = config("APP_DOMAIN", default="http://localhost:8000")
 
 
+# cors configuration
+
 
 # Internationalization
 
@@ -160,23 +163,43 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Swagger settings
 SPECTACULAR_SETTINGS = {
-    "TITLE": "LMS API",
-    "DESCRIPTION": "Learning Management System API Documentation",
+    "TITLE": "ATS API",
+    "DESCRIPTION": "Applicant Tracking System API Documentation",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "SERVERS": [
+        {"url": APP_DOMAIN, "description": "Current environment"},
+    ],
     "COMPONENT_SPLIT_REQUEST": True,
-    "CAMELIZE_NAMES": True,
+    "CAMELIZE_NAMES": False,
     "SCHEMA_PATH_PREFIX": r"/api/{version}/",
+    "SCHEMA_PATH_PREFIX_TRIM": False,
+    "SORT_OPERATIONS": True,
+    "APPEND_COMPONENTS": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            }
+        }
+    },
+    "AUTHENTICATION_WHITELIST": [],
+    "SECURITY": [{"BearerAuth": []}],
     "SWAGGER_UI_DIST": "SIDECAR",
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
     "SWAGGER_UI_SETTINGS": {
         "deepLinking": True,
         "persistAuthorization": True,
-        "displayOperationId": True,
+        "docExpansion": "none",
+        "displayOperationId": False,
         "displayRequestDuration": True,
         "filter": True,
         "tryItOutEnabled": True,
+        "operationsSorter": "alpha",
+        "tagsSorter": "alpha",
+        "defaultModelExpandDepth": 2,
         "defaultModelsExpandDepth": -1,
     },
 }
@@ -337,3 +360,14 @@ CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 # End of CKEditor 5 Configuration
 # ===============================
 
+# ===========================[ Email Configuration ]==========================
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+SERVER_EMAIL = config("DEFAULT_FROM_EMAIL")
