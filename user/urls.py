@@ -8,7 +8,7 @@ from user.api import (
     PasswordResetAPI,
     UserSignUpAPI,
 )
-from user.views import PasswordResetConfirmTemplateView
+from user.views import PasswordResetConfirmTemplateView, resend_otp
 
 urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh-api"),
@@ -25,6 +25,7 @@ urlpatterns = [
                     name="password-change-api",
                 ),
                 path("reset/", PasswordResetAPI.as_view(), name="password_reset_api"),
+                path("resend-otp/", resend_otp, name="resend-otp"),
             ]
         ),
     ),

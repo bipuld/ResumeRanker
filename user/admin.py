@@ -33,7 +33,7 @@ class UserAdmin(BaseUserAdmin):
         (_("Basic Info"), {"fields": ("email", "username", "password")}),
         (
             _("Personal Details"),
-            {"fields": ("first_name", "middle_name", "last_name", "phone")},
+            {"fields": ("first_name", "middle_name", "last_name", "phone","role")},
         ),
         (
             _("Verification Flags"),
@@ -58,6 +58,7 @@ class UserAdmin(BaseUserAdmin):
                 )
             },
         ),
+        (_("OTP Info"), {"fields": ("otp", "otp_created_at", "otp_attempts", "otp_last_sent")}),
         (_("Security"), {"fields": ("mfa_enabled", "password_changed_date")}),
         (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
     )
@@ -79,3 +80,4 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
     )
+

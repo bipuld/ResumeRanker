@@ -5,7 +5,7 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
-from user.views import PasswordResetConfirmTemplateView
+from user.views import PasswordResetConfirmTemplateView,resend_otp, verify_otp
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'api/(?P<version>v1)/', include('user.urls')),
@@ -14,6 +14,8 @@ urlpatterns = [
         PasswordResetConfirmTemplateView.as_view(),
         name="password_reset_confirm_web",
     ),
+    path("verify-otp/", verify_otp, name="verify-otp"),
+    path("resend-otp/", resend_otp, name="resend-otp"),
     path(
         "api/",
         include([

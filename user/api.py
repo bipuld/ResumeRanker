@@ -41,7 +41,7 @@ from user.serializers import (
     TokenSerializer,
     UserSerializer,
 )
-from .utils import generate_random_password
+from user.utils import generate_random_password, send_otp
 
 
 
@@ -54,6 +54,21 @@ class UserSignUpAPI(CreateAPIView):
     serializer_class = UserSignUpSerializer
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
+
+    def create(self, request, *args, **kwargs):
+        serializer= self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        # send verification email with OTP
+        send_otp(user)
+        return Response(
+            {
+                "status": status.HTTP_201_CREATED,
+                "message": "User created successfully. Please check your email for the OTP to verify your account.",
+                "results": UserSerializer(user).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 

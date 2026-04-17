@@ -25,6 +25,11 @@ from .managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    ROLE_CHOICES = [
+    ('candidate', 'Candidate'),
+    ('recruiter', 'Recruiter'),
+    ('admin', 'Admin'),
+    ]
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     email = models.EmailField(_("email address"), unique=True, null=True, blank=True)
     username = models.CharField(_("username"), max_length=255, unique=True)
@@ -60,6 +65,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     is_staff = models.BooleanField(default=False)
     password_changed_date = models.DateTimeField(auto_now_add=True)
+    role=models.CharField(max_length=20, choices=ROLE_CHOICES, default='candidate',help_text="Role of the user in the system")
+    otp = models.CharField(max_length=6, blank=True, null=True)
+    otp_created_at = models.DateTimeField(null=True, blank=True)
+    otp_attempts = models.IntegerField(default=0)
+    otp_last_sent = models.DateTimeField(null=True, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]

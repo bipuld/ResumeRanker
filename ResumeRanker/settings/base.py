@@ -155,7 +155,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR.parent, 'staticfiles')
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',  
+    BASE_DIR.parent / 'static',
 ]
 
 MEDIA_URL = "/media/"
@@ -371,3 +371,5 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 SERVER_EMAIL = config("DEFAULT_FROM_EMAIL")
+
+# in manage.py (not recommended for production)

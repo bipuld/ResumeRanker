@@ -38,7 +38,7 @@ JAZZMIN_SETTINGS = {
         "auth.user": "fas fa-user",
 
         "user.User": "fas fa-user-tie",
-        "user.Resume": "fas fa-file-pdf",
+        # "user.Resume": "fas fa-file-pdf",
         "user.Job": "fas fa-briefcase",
         "user.Application": "fas fa-paper-plane",
         "user.Score": "fas fa-chart-line",
@@ -86,13 +86,13 @@ JAZZMIN_SETTINGS = {
 
     "changeform_format_overrides": {
         "user.User": "collapsible",
-        "user.Resume": "vertical_tabs",
+        # "user.Resume": "vertical_tabs",
     },
 
     # ========================
     # Search
     # ========================
-    "search_model": ["user.User", "user.Resume"],
+    "search_model": ["user.User"],
 
     # ========================
     # Custom Styling

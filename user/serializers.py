@@ -127,13 +127,16 @@ class UserSignUpSerializer(serializers.ModelSerializer):
         Username is set to email if present, otherwise phone.
         """
         password = validated_data.pop("password")
+        validated_data["role"] = "candidate"
         user = User(**validated_data)
         user.set_password(password)
         user.username = validated_data.get("email") or validated_data.get("phone")
         user.save()
+
+
         # Assign user to 'Student' group
         try:
-            student_group = Group.objects.get(name="Student")
+            student_group = Group.objects.get(name="candidate")
             user.groups.add(student_group)
         except Group.DoesNotExist:
             pass  # Handle case where Student group doesn't exist
@@ -168,6 +171,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
         if not re.fullmatch(r"[^@]+@[^@]+\.[^@]+", email):
             raise ValidationError({"message": "Enter a valid email address."})
 
+        
         # Create queryset to find the user by email (case-insensitive)
         attrs["queryset"] = {"email__iexact": email}
         return attrs
@@ -185,14 +189,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
                 {"message": "No account found with these credentials."}
             )
         if not user.is_verified:
-            pass
-            # raise ValidationError(
-            #     {
-            #         "username": [
-            #             "You're not verified at LMS System."
-            #         ]
-            #     }
-            # )
+            raise ValidationError({"message": "Please verify your email first"})
 
         if not user.check_password(password):
             raise ValidationError(
