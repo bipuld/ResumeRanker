@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from .models import User, UserSession
+from .models import User, UserSession, UserProfile, CandidateProfile
 
 from django.contrib.sessions.models import Session
 
@@ -81,3 +81,106 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
 
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+
+    list_display = ("user", "gender", "dob", "is_verified")
+    search_fields = ("user__email", "user__username")
+    list_filter = ("gender", "is_verified")
+
+    fieldsets = (
+        ("User", {
+            "fields": ("user",)
+        }),
+
+        ("Personal Info", {
+            "fields": (
+                "bio",
+                "profile_image",
+                "gender",
+                "dob",
+                "current_address",
+                "permanent_address",
+                "language",
+            )
+        }),
+
+        ("Status", {
+            "fields": ("is_verified",)
+        }),
+    )
+
+@admin.register(CandidateProfile)
+class CandidateProfileAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "user",
+        "current_job_title",
+        "experience_years",
+        "is_profile_complete",
+        "is_profile_verified",
+    )
+
+    search_fields = (
+        "user__email",
+        "skills",
+        "current_job_title",
+        "university",
+    )
+
+    list_filter = (
+        "is_profile_complete",
+        "is_profile_verified",
+        "experience_years",
+    )
+
+    readonly_fields = ("parsed_resume_text",)
+
+    fieldsets = (
+        ("User", {
+            "fields": ("user",)
+        }),
+
+        ("Resume", {
+            "fields": ("resume", "parsed_resume_text", "skills")
+        }),
+
+        ("Professional Info", {
+            "fields": (
+                "experience_years",
+                "current_job_title",
+                "highest_education",
+                "university",
+                "location",
+            )
+        }),
+
+        ("Links", {
+            "fields": (
+                "linkedin_url",
+                "github_url",
+                "portfolio_url",
+            )
+        }),
+
+        ("Status", {
+            "fields": (
+                "is_profile_complete",
+                "is_profile_verified",
+            )
+        }),
+    )
+
+class CandidateProfileInline(admin.StackedInline):
+    model = CandidateProfile
+    can_delete = False
+    extra = 0
+
+
+class UserProfileInline(admin.StackedInline):
+    model = UserProfile
+    can_delete = False
+    extra = 0
+
+class UserAdmin(BaseUserAdmin):
+    inlines = [UserProfileInline, CandidateProfileInline]

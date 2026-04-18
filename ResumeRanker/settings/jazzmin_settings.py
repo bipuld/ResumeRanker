@@ -22,7 +22,7 @@ JAZZMIN_SETTINGS = {
     # ========================
     "topmenu_links": [
         {"name": "Dashboard", "url": "admin:index"},
-        {"name": "Frontend", "url": "/", "new_window": True},
+        {"name": "Frontend", "url": "http://localhost:5173", "new_window": True},
     ],
 
     "order_with_respect_to": [

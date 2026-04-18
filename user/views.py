@@ -5,11 +5,13 @@ from django.views import View
 
 from utils.services import register_fcm_device
 
-from user.serializers import PasswordResetConfirmSerializer
+from user.serializers import PasswordResetConfirmSerializer, VerifyOTPSerializer, ResendOTPSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from user.utils import generate_otp, send_otp
 from rest_framework_simplejwt.tokens import RefreshToken
+from drf_spectacular.utils import extend_schema
+
 # Create your views here.
 from django.contrib.auth import get_user_model
 
@@ -52,86 +54,26 @@ class PasswordResetConfirmTemplateView(View):
                     "error": error_message,
                 },
             )
-
-
-
-
+from drf_spectacular.utils import extend_schema
+@extend_schema(
+    request=VerifyOTPSerializer,
+    responses={200: dict}
+)
 @api_view(["POST"])
 def verify_otp(request):
-    email = request.data.get("email")
-    otp = request.data.get("otp")
+    serializer = VerifyOTPSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
 
-    try:
-        user = User.objects.get(email=email)
-    except User.DoesNotExist:
-        return Response({"error": "User not found"}, status=404)
+    return Response(serializer.save())
 
-    if not user.otp or not user.otp_created_at:
-        return Response({"error": "OTP not generated"}, status=400)
-
-    if timezone.now() > user.otp_created_at + timedelta(minutes=1):
-        return Response({"error": "OTP expired. Please request a new OTP."}, status=400)
-
-    # then check OTP
-    if user.otp != otp:
-        return Response({"error": "Invalid OTP"}, status=400)
-
-    user.is_verified = True
-    user.otp = None
-    user.is_email_verified = True
-    user.otp_created_at = None
-    user.save()
-
-
-    refresh = RefreshToken.for_user(user)
-
-    return Response({
-        "message": "Account verified successfully",
-        "refresh": str(refresh),
-        "access": str(refresh.access_token),
-        "user": {
-            "id": str(user.id),
-            "email": user.email,
-        }
-    })
-
+@extend_schema(
+    request=ResendOTPSerializer,
+    responses={200: dict}
+)
 
 @api_view(["POST"])
-def resend_otp(request,*args, **kwargs):
-    email = request.data.get("email")
+def resend_otp(request):
+    serializer = ResendOTPSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
 
-    try:
-        user = User.objects.get(email=email)
-    except User.DoesNotExist:
-        return Response({"error": "User not found"}, status=404)
-
-    if user.is_verified:
-        return Response({"message": "User already verified"})
-    now = timezone.now()
-
-    if user.otp_last_sent and now > user.otp_last_sent + timedelta(minutes=10):
-        user.otp_attempts = 0
-    if user.otp_last_sent and now < user.otp_last_sent + timedelta(seconds=30):
-        return Response(
-            {"error": "Please wait 30 seconds before requesting again"},
-            status=429
-        )
-
-    if user.otp_attempts >= 3:
-        return Response(
-            {"error": "Too many requests. Try again after 10 minutes"},
-            status=429
-        )
-
-    otp = generate_otp()
-    user.otp = otp
-    user.otp_created_at = now
-
-    # ✅ Update tracking (ALWAYS)
-    user.otp_last_sent = now
-    user.otp_attempts += 1
-
-    user.save()
-    send_otp(user)
-
-    return Response({"message": "New OTP sent"})
+    return Response(serializer.save())

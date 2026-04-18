@@ -33,9 +33,11 @@ INSTALLED_APPS = [
     "drf_spectacular_sidecar",
     "rest_framework_simplejwt.token_blacklist",
     "user",
+    "recruiter",
 ]
 EXTERNAL_APPS = [
     "django_ckeditor_5",
+    "fcm_django",
 ]
 INSTALLED_APPS += EXTERNAL_APPS
 
@@ -133,6 +135,12 @@ SIMPLE_JWT = {
 
 # frontend and backend app domains
 APP_DOMAIN = config("APP_DOMAIN", default="http://localhost:8000")
+
+FCM_DJANGO_SETTINGS = {
+    "DEFAULT_FIREBASE_APP": None,
+    "ONE_DEVICE_PER_USER": False,
+    "DELETE_INACTIVE_DEVICES": True,
+}
 
 
 # cors configuration

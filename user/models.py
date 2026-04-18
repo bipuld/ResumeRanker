@@ -21,6 +21,8 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 
 from utils.common_model import CommonModel
 
+from django.contrib.auth import get_user_model
+
 from .managers import UserManager
 
 
@@ -161,64 +163,65 @@ class User(AbstractBaseUser, PermissionsMixin):
             session.deactivate()
             print(f"Deactivated session {session.session_key} for user {self.username}")
 
+class CandidateProfile(CommonModel):
 
-# class UserProfile(CommonModel):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
-#     bio = CKEditor5Field("Bio", config_name="extends", blank=True)
-#     profile_image = models.ImageField(
-#         upload_to=profile_image_upload_to,
-#         null=True,
-#         blank=True,
-#         help_text="Upload a profile picture",
-#     )
-#     gender = models.CharField(
-#         max_length=60, choices=GenderChoice, default=GenderChoice.male
-#     )
-#     dob = models.DateField(
-#         blank=False, null=False, help_text="Date of Birth in AD"
-#     )  # date_of_birth
-#     current_address = models.CharField(max_length=100)
-#     permanent_address = models.CharField(max_length=100)
-#     language = models.CharField(
-#         max_length=100, null=True, blank=True
-#     )  # the language they spoke
-#     is_profile_verified = models.BooleanField(
-#         default=False, help_text="Indicates user if verified or not "
-#     )  # In future to check if user profile is subscribed
-#     nepali_dob = models.CharField(
-#         blank=True,
-#         null=True,
-#         help_text="Date of Birth in BS",
-#         verbose_name="Nepali Date of Birth",
-#     )
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="candidate_profile"
+    )
 
-#     class Meta:
-#         verbose_name = _("user profile")
-#         verbose_name_plural = _("user profiles")
-#         ordering = ("-created_at",)
+    resume = models.FileField(upload_to="resumes/")
+    parsed_resume_text = models.TextField(blank=True, null=True)
+    skills = models.JSONField(default=list)
+    experience_years = models.FloatField(default=0)
+    current_job_title = models.CharField(max_length=255, blank=True, null=True)
+    highest_education = models.CharField(max_length=255, blank=True, null=True)
+    university = models.CharField(max_length=255, blank=True, null=True)
+    linkedin_url = models.URLField(blank=True, null=True)
+    github_url = models.URLField(blank=True, null=True)
+    portfolio_url = models.URLField(blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    is_profile_complete = models.BooleanField(default=False)
+    is_profile_verified = models.BooleanField(default=False)
 
-#     def save(self, *args, **kwargs):
-#         if self.dob:
-#             self.nepali_dob = str(nepali_datetime.date.from_datetime_date(self.dob))
-#             print(f"Date of Birth in Nepali: {self.nepali_dob}")
-#         else:
-#             print("Date of Birth is not set for this user profile.")
-#         return super().save(*args, **kwargs)
 
-#     def get_dob_bs(self):
-#         """
-#         Returns the date of birth in BS format fully in Nepali (Devanagari script).
-#         """
-#         if self.dob:
-#             nepali_date = nepali_datetime.date.from_datetime_date(self.dob)
-#             formatted_date = nepali_date.strftime("%K %B %d")
-#             print(f"Date of Birth in Nepali: {formatted_date}")
-#             return formatted_date
-#         print("Date of Birth is not set for this user profile.")
-#         return None
 
-#     def __str__(self):
-#         return f"{self.user.first_name}"
+    def clean_skills(self):
+        if self.skills:
+            self.skills = [
+                str(skill).lower().strip()
+                for skill in self.skills
+                if skill
+            ]
+
+    def check_profile_complete(self):
+        return all([
+            self.resume,
+            self.skills,
+            self.current_job_title,
+            self.highest_education,
+        ])
+
+    def save(self, *args, **kwargs):
+        self.clean_skills()
+        self.is_profile_complete = self.check_profile_complete()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user.email} Candidate"
+
+class UserProfile(CommonModel):
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    bio= CKEditor5Field("Bio", config_name="extends", blank=True)
+    profile_image = models.ImageField(upload_to="profiles/", null=True, blank=True)
+    gender = models.CharField(max_length=20, blank=True, null=True)
+    dob = models.DateField(null=True, blank=True)
+    current_address = models.CharField(max_length=255, blank=True, null=True)
+    permanent_address = models.CharField(max_length=255, blank=True, null=True)
+    language = models.CharField(max_length=100, blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
 
 
 

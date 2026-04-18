@@ -62,6 +62,7 @@ class UserSignUpSerializer(serializers.ModelSerializer):
             "last_name",
             "phone",
             "full_name",
+            "role",
         )
         extra_kwargs = {"password": {"write_only": True}}
 
@@ -127,19 +128,20 @@ class UserSignUpSerializer(serializers.ModelSerializer):
         Username is set to email if present, otherwise phone.
         """
         password = validated_data.pop("password")
-        validated_data["role"] = "candidate"
+        role = validated_data.get("role")
+        
         user = User(**validated_data)
         user.set_password(password)
         user.username = validated_data.get("email") or validated_data.get("phone")
         user.save()
 
 
-        # Assign user to 'Student' group
+        # Assign user to 'Candidate' group
         try:
-            student_group = Group.objects.get(name="candidate")
-            user.groups.add(student_group)
+            candidate_group = Group.objects.get(name__iexact=role)
+            user.groups.add(candidate_group)
         except Group.DoesNotExist:
-            pass  # Handle case where Student group doesn't exist
+            pass  # Handle case where Candidate group doesn't exist
 
         # Optionally generate verification token or UID here
         uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -150,16 +152,32 @@ class UserSignUpSerializer(serializers.ModelSerializer):
 
 class UserLoginSerializer(serializers.ModelSerializer):
     fcm_token = serializers.CharField(required=False, allow_null=True)
+    device_type = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    device_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    device_id = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     email = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)
+    role = serializers.CharField(required=False)
+
 
 
     class Meta:
         model = User
-        fields = ("id", "email", "password", "is_verified", "fcm_token")
+        fields = (
+            "id",
+            "email",
+            "password",
+            "is_verified",
+            "fcm_token",
+            "device_type",
+            "device_name",
+            "device_id",
+            "role",
+        )
         read_only_fields = (
             "id",
             "is_verified",
+
         )
 
     def validate(self, attrs: dict[str, str]):
@@ -178,17 +196,29 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
+        ROLE_ACCESS = {
+            "candidate": ["candidate"],
+            "recruiter": ["recruiter"],
+            "admin": ["admin", "candidate"],  # admin can also use user dashboard
+        }
         queryset = validated_data.pop("queryset")
         password = validated_data.pop("password")
         fcm_token = validated_data.pop("fcm_token", None)
-
+        device_type = validated_data.pop("device_type", None)
+        device_name = validated_data.pop("device_name", None)
+        device_id = validated_data.pop("device_id", None)
+        requested_role = validated_data.pop("role", None)
         try:
             user = User.objects.get(**queryset)
         except User.DoesNotExist:
             raise ValidationError(
                 {"message": "No account found with these credentials."}
             )
-        if not user.is_verified:
+        if requested_role and requested_role not in ROLE_ACCESS.get(user.role, []):
+            raise ValidationError(
+                {"message": f"You are not allowed to access {requested_role} dashboard"}
+            )
+        if not user.is_verified and user.role.lower() != "admin" and not user.is_superuser:
             raise ValidationError({"message": "Please verify your email first"})
 
         if not user.check_password(password):
@@ -196,13 +226,19 @@ class UserLoginSerializer(serializers.ModelSerializer):
                 {"message": "Credential does not match. Please try again."}
             )
 
+
         if not user.is_active:
             user.is_active = True
             user.save()
 
-        # if fcm_token:
-        #     pass
-        #     register_fcm_device(user, self.context["request"])
+        if fcm_token:
+            register_fcm_device(
+                user=user,
+                fcm_token=fcm_token,
+                device_type=device_type,
+                device_name=device_name,
+                device_id=device_id,
+            )
         return user
 
 
@@ -415,3 +451,93 @@ class UserLogoutSerializer(serializers.Serializer):
         required=True,
         write_only=True,
     )
+
+class VerifyOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.CharField(max_length=6)
+
+    def validate(self, data):
+        email = data["email"]
+        otp = data["otp"]
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User not found")
+
+        if not user.otp or not user.otp_created_at:
+            raise serializers.ValidationError("OTP not generated")
+
+        if timezone.now() > user.otp_created_at + timedelta(minutes=5):
+            raise serializers.ValidationError("OTP expired")
+
+        if user.otp != otp:
+            raise serializers.ValidationError("Invalid OTP")
+
+        data["user"] = user
+        return data
+
+    def save(self):
+        user = self.validated_data["user"]
+
+        user.is_verified = True
+        user.is_email_verified = True
+        user.otp = None
+        user.otp_created_at = None
+        user.save()
+
+        refresh = RefreshToken.for_user(user)
+
+        return {
+            "message": "Account verified successfully",
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "user": {
+                "id": str(user.id),
+                "email": user.email,
+            }
+        }
+
+
+class ResendOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate(self, data):
+        email = data["email"]
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User not found")
+
+        if user.is_verified:
+            raise serializers.ValidationError("User already verified")
+
+        now = timezone.now()
+
+        if user.otp_last_sent and now < user.otp_last_sent + timedelta(seconds=30):
+            raise serializers.ValidationError("Wait 30 seconds")
+
+        if user.otp_attempts >= 3 and user.otp_last_sent and now < user.otp_last_sent + timedelta(minutes=10):
+            raise serializers.ValidationError("Too many requests, try later")
+
+        data["user"] = user
+        return data
+
+    def save(self):
+        user = self.validated_data["user"]
+
+        from .utils import generate_otp, send_otp
+
+        now = timezone.now()
+        otp = generate_otp()
+
+        user.otp = otp
+        user.otp_created_at = now
+        user.otp_last_sent = now
+        user.otp_attempts += 1
+        user.save()
+
+        send_otp(user)
+
+        return {"message": "New OTP sent"}

@@ -45,15 +45,19 @@ from rest_framework.exceptions import ValidationError
 #     return f"school/thumbnails/{instance.id}/{filename}"
 
 
-def register_fcm_device(user, request):
+def register_fcm_device(
+    user,
+    fcm_token,
+    device_type=None,
+    device_name=None,
+    device_id=None,
+):
     """
     Register or update an FCM device for the given user.
     Handles unique registration_id constraint.
     """
-    fcm_token = request.data.get("fcm_token")
-    device_type = request.data.get("device_type", "web").lower()
-    device_name = request.data.get("device_name", f"{device_type.title()} Device")
-    device_id = request.data.get("device_id")
+    device_type = (device_type or "web").lower()
+    device_name = device_name or f"{device_type.title()} Device"
 
     if not fcm_token:
         return
