@@ -40,6 +40,7 @@ from user.serializers import (
     UserSignUpSerializer,
     TokenSerializer,
     UserSerializer,
+    UserProfileSerializer
 )
 from user.utils import generate_random_password, send_otp
 
@@ -215,6 +216,7 @@ class PasswordChangeAPI(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user: User = request.user  # type: ignore
+            print(f"Changing password for user: {user.email}")
             user.set_password(serializer.validated_data["new_password"])
             user.password_changed_date = datetime.datetime.now()
             if not user.is_verified:
@@ -552,3 +554,10 @@ class PasswordResetConfirmTemplateView(View):
 
 #         update_last_login(user, user)
 #         return user
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user.profile

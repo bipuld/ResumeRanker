@@ -119,11 +119,11 @@ REST_FRAMEWORK = {
 
 # cors configuration
 CORS_ALLOW_ALL_ORIGINS = True
-
+FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:5173")
 # JWT Authentication settings
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=config("ACCESS_TOKEN_LIFETIME_MINUTES", default=5, cast=int)
+        minutes=config("ACCESS_TOKEN_LIFETIME_MINUTES", default=15, cast=int)
     ),
     "REFRESH_TOKEN_LIFETIME": timedelta(
         minutes=config("REFRESH_TOKEN_LIFETIME_MINUTES", default=15, cast=int)

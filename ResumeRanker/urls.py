@@ -8,15 +8,19 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from recruiter.api import AcceptInviteView
 from user.views import PasswordResetConfirmTemplateView,resend_otp, verify_otp
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'api/(?P<version>v1)/', include('user.urls')),
+    re_path(r'api/(?P<version>v1)/', include('recruiter.urls')),
     path(
         "password/reset-confirm/",
         PasswordResetConfirmTemplateView.as_view(),
         name="password_reset_confirm_web",
     ),
+    path("invite/<uuid:token>", AcceptInviteView.as_view(), name="invite-short"),
+    path("invite/<uuid:token>/", AcceptInviteView.as_view(), name="invite-short-slash"),
     path("verify-otp/", verify_otp, name="verify-otp"),
     path("resend-otp/", resend_otp, name="resend-otp"),
     path(

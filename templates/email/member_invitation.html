@@ -1,0 +1,97 @@
+{% extends "email/base.html" %}
+{% block content %}
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+
+    <!-- Logo -->
+    <tr>
+        <td align="center" style="padding-bottom: 22px;">
+            <div style="display: inline-block; width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(135deg, #0f766e 0%, #1d4ed8 100%); line-height: 64px; text-align: center; font-size: 28px; color: #ffffff; font-weight: 700; box-shadow: 0 14px 30px rgba(29, 78, 216, 0.24);">
+                RR
+            </div>
+        </td>
+    </tr>
+
+    <!-- Title -->
+    <tr>
+        <td style="text-align: center; padding-bottom: 16px;">
+            <div style="font-size: 30px; line-height: 1.25; font-weight: 800; color: #0f172a; letter-spacing: -0.4px;">
+                You're invited to join {{ company.name }}
+            </div>
+        </td>
+    </tr>
+
+    <!-- Description -->
+    <tr>
+        <td style="text-align: center; padding-bottom: 24px; font-size: 15px; line-height: 1.8; color: #475569;">
+            Hi <span style="font-weight: 700; color: #0f172a;">{{ user_name|default:user.email }}</span>,
+            <br><br>
+            You have been invited to join <strong>{{ company.name }}</strong> as <strong>{{ role }}</strong> on ResumeRanker ATS.
+            Accept the invitation to start collaborating on hiring, job postings, and candidate management.
+        </td>
+    </tr>
+
+    <!-- Company Info Card -->
+    <tr>
+        <td style="padding-bottom: 24px;">
+            <div style="background: #f8fbff; border: 1px solid #d8e3f0; border-radius: 16px; padding: 18px;">
+                
+                <div style="font-size: 14px; font-weight: 800; color: #0f766e; margin-bottom: 8px;">
+                    Company Details
+                </div>
+
+                <div style="font-size: 14px; color: #475569; line-height: 1.7;">
+                    <strong>Name:</strong> {{ company.name }}<br>
+                    <strong>Role:</strong> {{ role }}<br>
+                    <strong>Industry:</strong> {{ company.industry|default:"Not specified" }}
+                </div>
+
+            </div>
+        </td>
+    </tr>
+
+    <!-- Accept Button -->
+    <tr>
+        <td align="center" style="padding-bottom: 24px;">
+            <a href="{{ invite_link }}" class="btn"
+               style="display: inline-block; background: linear-gradient(135deg, #0f766e 0%, #1d4ed8 100%);
+                      color: #ffffff; text-decoration: none; font-weight: 700;
+                      padding: 15px 28px; border-radius: 14px;
+                      box-shadow: 0 12px 24px rgba(29, 78, 216, 0.22);">
+                Accept Invitation
+            </a>
+        </td>
+    </tr>
+
+    <!-- Fallback Link -->
+    <tr>
+        <td style="padding-bottom: 22px;">
+            <div class="note-box" style="background: #f8fbff; border: 1px solid #d8e3f0; border-left: 4px solid #0ea5e9; border-radius: 16px; padding: 16px 18px;">
+
+                <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: #0f766e; margin-bottom: 6px;">
+                    If button doesn't work
+                </div>
+
+                <div style="font-size: 14px; line-height: 1.7; color: #475569; margin-bottom: 8px;">
+                    Copy and paste this link:
+                </div>
+
+                <div style="font-size: 13px; word-break: break-all; color: #1d4ed8; font-weight: 700;">
+                    {{ invite_link }}
+                </div>
+
+            </div>
+        </td>
+    </tr>
+
+    <!-- Warning / Info -->
+    <tr>
+        <td style="font-size: 14px; line-height: 1.8; color: #475569;">
+            If you did not expect this invitation, you can safely ignore this email.
+            No account changes will be made unless you accept the invitation.
+        </td>
+    </tr>
+
+</table>
+
+{% endblock %}

@@ -60,7 +60,7 @@ from drf_spectacular.utils import extend_schema
     responses={200: dict}
 )
 @api_view(["POST"])
-def verify_otp(request):
+def verify_otp(request,*args, **kwargs):
     serializer = VerifyOTPSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
@@ -72,7 +72,7 @@ def verify_otp(request):
 )
 
 @api_view(["POST"])
-def resend_otp(request):
+def resend_otp(request,*args, **kwargs):
     serializer = ResendOTPSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 

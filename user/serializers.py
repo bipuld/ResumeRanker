@@ -1,7 +1,7 @@
 import json
 import re
 from base64 import urlsafe_b64decode
-
+from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.auth.tokens import (
@@ -22,7 +22,7 @@ from utils.services import register_fcm_device
 from utils.email import cleanup_email
 
 
-from .models import User
+from user.models import User, UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -134,6 +134,11 @@ class UserSignUpSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.username = validated_data.get("email") or validated_data.get("phone")
         user.save()
+
+        try:
+            UserProfile.objects.create(user=user)
+        except Exception as e:
+            raise ValidationError({"message": "Failed to create user profile."})
 
 
         # Assign user to 'Candidate' group
@@ -541,3 +546,35 @@ class ResendOTPSerializer(serializers.Serializer):
         send_otp(user)
 
         return {"message": "New OTP sent"}
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "email",
+            "username",
+            "first_name",
+            "middle_name",
+            "last_name",
+            "phone",
+            "role",
+            "is_email_verified",
+            "is_phone_verified",
+            "is_verified",
+        )
+
+class UserProfileSerializer(serializers.ModelSerializer):
+
+    user = UserDetailSerializer(read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = "__all__"
+
+        read_only_fields = (
+            "is_verified",
+            "dob",
+            "gender",
+            "user",   
+        )

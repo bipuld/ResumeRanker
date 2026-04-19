@@ -15,6 +15,7 @@ class UserAdmin(BaseUserAdmin):
         "email",
         "username",
         "full_name",
+        "role",
         "is_active",
         "is_verified",
         "is_staff",

@@ -7,6 +7,7 @@ from user.api import (
     PasswordChangeAPI,
     PasswordResetAPI,
     UserSignUpAPI,
+    UserProfileView
 )
 from user.views import PasswordResetConfirmTemplateView, resend_otp
 
@@ -29,4 +30,5 @@ urlpatterns = [
             ]
         ),
     ),
+    path("profile/", UserProfileView.as_view(), name="user-profile")
 ]
