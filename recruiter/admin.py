@@ -106,7 +106,8 @@ class CompanyMemberAdmin(admin.ModelAdmin):
         "user",
         "company",
         "role",
-        "invite_email",
+        "get_user_email",
+        "invited_by",
         "invite_status",
         "is_active",
         "is_approved",
@@ -134,7 +135,7 @@ class CompanyMemberAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("User Info", {
-            "fields": ("user", "invite_email", "company")
+            "fields": ("user", "invite_email", "company", "invited_by")
         }),
         ("Role & Status", {
             "fields": ("role", "invite_status", "is_active", "is_approved", "designation")
@@ -155,34 +156,6 @@ class CompanyMemberAdmin(admin.ModelAdmin):
         ("Timestamps", {
             "fields": ("created_at", "updated_at")
         }),
-    )
-
-    list_display = (
-        "user",
-        "company",
-        "role",
-        "designation",
-        "is_approved",
-        "is_active",
-        "can_post_jobs",
-        "can_view_applicants",
-        "created_at",
-    )
-
-    list_filter = (
-        "role",
-        "is_approved",
-        "is_active",
-        "can_post_jobs",
-        "can_manage_team",
-        "company",
-    )
-
-    search_fields = (
-        "user__email",
-        "user__username",
-        "company__name",
-        "designation",
     )
 
     autocomplete_fields = ("user", "company")
@@ -223,6 +196,10 @@ class CompanyMemberAdmin(admin.ModelAdmin):
             )
         }),
     )
+    def get_user_email(self, obj):
+        return obj.user.email if obj.user else obj.invite_email
+    get_user_email.short_description = "Email"
+
 
 
 @admin.register(Job)

@@ -47,3 +47,5 @@ def send_otp(user):
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
     )
+
+

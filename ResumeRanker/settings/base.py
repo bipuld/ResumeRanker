@@ -119,7 +119,7 @@ REST_FRAMEWORK = {
 
 # cors configuration
 CORS_ALLOW_ALL_ORIGINS = True
-FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:5173")
+WEB_UI_URL = config("WEB_UI_URL", default="http://localhost:5173")
 # JWT Authentication settings
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(

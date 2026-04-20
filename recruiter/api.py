@@ -4,7 +4,13 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import get_object_or_404
 
 from recruiter.models import Company
-from recruiter.serializers import CompanySerializer, CompanyMemberSerializer, ApplicationSerializer, JobSerializer
+from recruiter.serializers import (
+    CompanySerializer,
+    CompanyMemberSerializer,
+    ApplicationSerializer,
+    JobSerializer,
+    UserCompanyFullSerializer,
+)
 from utils.permission import IsOwnerOrAdmin,IsAdminUserOnly
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -17,16 +23,12 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.db.models import Q
+from rest_framework.views import APIView
+
 from .models import CompanyMember, Application
 
 
-def can_post_jobs(user, company):
-    return CompanyMember.objects.filter(
-        user=user,
-        company=company,
-        is_active=True,
-        can_post_jobs=True,
-    ).exists()
+
 
 # class CompanyViewSet(viewsets.ModelViewSet):
 #     queryset = Company.objects.all()
@@ -133,8 +135,32 @@ class CompanyAdminViewSet(viewsets.ModelViewSet):
 
 
 # Company owner members, jobs, applications etc. through separate viewsets which we will create next.
+class UserCompanyMembershipDetailsView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request, *args, **kwargs):
+        user = request.user
 
+        memberships = CompanyMember.objects.select_related("company").filter(
+            user=user,
+            is_active=True
+        )
+
+        serializer = UserCompanyFullSerializer(
+            memberships,
+            many=True,
+            context={"request": request}
+        )
+
+        data = {
+            "user": {
+                "id": user.id,
+                "email": user.email,
+            },
+            "companies": serializer.data
+        }
+
+        return Response(data)
 class InviteMemberView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -150,13 +176,14 @@ class InviteMemberView(APIView):
         member = CompanyMember.objects.create(
             company=company,
             invite_email=email,
+            invited_by=request.user,
             role=role,
             is_approved=False,
             is_active=False
         )
 
         # 3. Invite link
-        invite_link = f"{settings.FRONTEND_URL}/login/{member.invite_token}"
+        invite_link = f"{settings.WEB_UI_URL}/signup/{member.invite_token}"
 
         # 5. Email context
         context = {
@@ -184,37 +211,6 @@ class InviteMemberView(APIView):
         )
 
         return Response({"message": "Invite sent successfully"})
-
-
-class AcceptInviteView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return [AllowAny()]
-        return [IsAuthenticated()]
-
-    def get(self, request, token):
-        return Response(
-            {
-                "message": "Invitation link is valid. Sign in and send POST to this same URL to accept.",
-                "token": str(token),
-            },
-            status=status.HTTP_200_OK,
-        )
-
-    def post(self, request, token):
-        member = CompanyMember.objects.get(invite_token=token)
-
-        if member.invite_email != request.user.email:
-            return Response({"error": "Email mismatch"}, status=403)
-
-        member.user = request.user
-        member.invite_status = "accepted"
-        member.is_active = True
-        member.save()
-
-        return Response({"message": "Joined company"})
 
 
 
@@ -256,41 +252,14 @@ class CompanyMemberListView(generics.ListAPIView):
 class CompanyMemberUpdateView(generics.UpdateAPIView):
     queryset = CompanyMember.objects.all()
     serializer_class = CompanyMemberSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwnerOrAdmin]
 
 
 class CompanyMemberDeleteView(generics.DestroyAPIView):
     queryset = CompanyMember.objects.all()
     serializer_class = CompanyMemberSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwnerOrAdmin]
 
-
-class ResendInviteView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, pk):
-        member = CompanyMember.objects.get(pk=pk)
-
-        invite_link = f"{settings.FRONTEND_URL}/login/{member.invite_token}"
-        context = {
-            "company": member.company,
-            "role": member.role,
-            "invite_link": invite_link,
-            "user_name": request.user.get_full_name() or request.user.email,
-        }
-
-        html_content = render_to_string("email/member_invitation.html", context)
-
-        send_mail(
-            subject=f"You're invited to join {member.company.name}",
-            message="",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[member.invite_email],
-            html_message=html_content,
-            fail_silently=False,
-        )
-
-        return Response({"message": "Invite resent successfully"}, status=status.HTTP_200_OK)
 
 
 class PendingInvitesView(generics.ListAPIView):

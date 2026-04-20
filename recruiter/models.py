@@ -100,6 +100,13 @@ class CompanyMember(CommonModel):
 
     # INVITE SYSTEM
     invite_email = models.EmailField()
+    invited_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="sent_invites"
+    )
+
     invite_token = models.UUIDField(default=uuid.uuid4, unique=True)
     invite_status = models.CharField(max_length=20, default="pending")
 
@@ -108,24 +115,13 @@ class CompanyMember(CommonModel):
 
     class Meta:
         unique_together = ("user", "company")
+
     def save(self, *args, **kwargs):
-        is_new_verification = False
-
-        if self.pk:
-            old = Company.objects.get(pk=self.pk)
-            if not old.is_verified and self.is_verified:
-                is_new_verification = True
-
         super().save(*args, **kwargs)
 
-        # 🔥 when company becomes verified
-        if is_new_verification:
-            self.members.filter(role="owner").update(
-                is_approved=True
-            )
     def __str__(self):
-        return f"{self.user.email} - {self.company.name} ({self.role})"
-
+        member_identifier = self.user.email if self.user else self.invite_email
+        return f"{member_identifier} - {self.company.name} ({self.role})"
 
 
 # models/job.py

@@ -4,15 +4,15 @@ from .api import (
     CompanyViewSet,
     CompanyAdminViewSet,
     InviteMemberView,
-    AcceptInviteView,
+
     JobCreateView,
     ApplyJobView,
     UpdateApplicationView,
     CompanyMemberListView,
     CompanyMemberUpdateView,
     CompanyMemberDeleteView,
-    ResendInviteView,
     PendingInvitesView,
+    UserCompanyMembershipDetailsView
 )
 from django.urls import path
 
@@ -27,12 +27,9 @@ urlpatterns = [
         name="company-invite"
     ),
 
-    # 📬 Accept invite
-    path(
-        "company/invite/<uuid:token>/accept/",
-        AcceptInviteView.as_view(),
-        name="accept-invite"
-    ),
+
+    path("member/details/", UserCompanyMembershipDetailsView.as_view()),
+
 
     # 👥 List members
     path(
@@ -43,25 +40,17 @@ urlpatterns = [
 
     # ✏️ Update member role
     path(
-        "company/member/<uuid:pk>/",
+        "company/member/<int:pk>/",
         CompanyMemberUpdateView.as_view(),
         name="update-member"
     ),
 
     # ❌ Remove member
     path(
-        "company/member/<uuid:pk>/delete/",
+        "company/member/<int:pk>/delete/",
         CompanyMemberDeleteView.as_view(),
         name="delete-member"
     ),
-
-    # 🔁 Resend invite
-    path(
-        "company/member/<uuid:pk>/resend-invite/",
-        ResendInviteView.as_view(),
-        name="resend-invite"
-    ),
-
     # 📊 Pending invites list
     path(
         "company/<uuid:company_id>/invites/",

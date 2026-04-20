@@ -110,8 +110,28 @@ class UserLoginAPI(CreateAPIView):
         serializer: UserLoginSerializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend') # this handle the user login and triggred signals
+        invite_token = request.data.get("invite_token")
+        if invite_token:
+            """ Handle company invite acceptance if invite_token is provided during login """
+            from recruiter.models import CompanyMember 
+            try:
+                membership = CompanyMember.objects.get(
+                    invite_token=invite_token,
+                    invite_status="pending"
+                )
 
+                if membership.invite_email.lower() != user.email.lower():
+                    raise ValidationError({"message": "Invite email mismatch"})
+                membership.user = user
+                membership.invite_status = "accepted"
+                membership.is_approved = True
+                membership.is_active = True
+                membership.save(update_fields=["user", "invite_status", "is_approved", "is_active", "updated_at"])
+
+            except CompanyMember.DoesNotExist:
+                raise ValidationError({"message": "Invalid or expired invite token"})
+
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend') # this handle the user login and triggred signals
 
         refresh: RefreshToken = RefreshToken.for_user(user)
         headers = self.get_success_headers(serializer.data)
